@@ -11,7 +11,7 @@ RUN /bin/bash -c \
   varnish \
   varnish-dev
 
-RUN go get github.com/phenomenes/varnishlogbeat
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -ldflags="-w -s" github.com/phenomenes/varnishlogbeat
 
 #FROM scratch
 FROM gcr.io/distroless/base:debug
