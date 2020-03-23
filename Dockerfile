@@ -1,4 +1,4 @@
-FROM golang:1.11-stretch AS build
+FROM golang:1.14-stretch AS build
 LABEL maintainer Delta Projects
 ENV DEBIAN_FRONTEND noninteractive
 ENV VER 6.4
@@ -11,10 +11,13 @@ RUN /bin/bash -c \
   varnish \
   varnish-dev
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -ldflags="-w -s" github.com/phenomenes/varnishlogbeat
+RUN go get github.com/phenomenes/varnishlogbeat
 
-#FROM scratch
-FROM gcr.io/distroless/base:debug
+FROM gcr.io/distroless/base
 LABEL maintainer Delta Projects
-COPY --from=build /go/bin/varnishlogbeat /varnishlogbeat
-CMD ["/varnishlogbeat", "-c", "/etc/varnishlogbeat/varnishlogbeat.yml", "-e"]
+COPY --from=build /go/bin/varnishlogbeat /
+COPY --from=build /go/src/github.com/phenomenes/varnishlogbeat/varnishlogbeat.template* /etc/varnishlogbeat/
+COPY --from=build /go/src/github.com/phenomenes/varnishlogbeat/varnishlogbeat*yml /etc/varnishlogbeat/
+COPY --from=build /usr/lib/libvarnishapi.so* /usr/lib/
+COPY --from=build /lib/x86_64-linux-gnu/libpcre.so.* /lib/x86_64-linux-gnu/
+CMD ["/varnishlogbeat", "-path.config", "/etc/varnishlogbeat", "-c", "/etc/varnishlogbeat/varnishlogbeat.yml", "-e"]
