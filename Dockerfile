@@ -16,4 +16,4 @@ RUN go get github.com/phenomenes/varnishlogbeat
 FROM scratch
 LABEL maintainer Delta Projects
 COPY --from=build /go/bin/varnishlogbeat /
-CMD /varnishlogbeat -c /etc/varnishlogbeat/varnishlogbeat.yml -e
+CMD ["/varnishlogbeat", "-c", "/etc/varnishlogbeat/varnishlogbeat.yml", "-e"]
