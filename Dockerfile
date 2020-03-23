@@ -13,7 +13,8 @@ RUN /bin/bash -c \
 
 RUN go get github.com/phenomenes/varnishlogbeat
 
-FROM scratch
+#FROM scratch
+FROM gcr.io/distroless/base:debug
 LABEL maintainer Delta Projects
 COPY --from=build /go/bin/varnishlogbeat /varnishlogbeat
 CMD ["/varnishlogbeat", "-c", "/etc/varnishlogbeat/varnishlogbeat.yml", "-e"]
